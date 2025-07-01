@@ -53,6 +53,7 @@
       border-radius: 8px;
       padding: 25px;
       box-sizing: border-box;
+      text-align: center;
     }
 
     h2 {
@@ -65,17 +66,23 @@
       display: block;
       margin: 15px 0 5px;
       font-size: 1.1em;
+      text-align: left;
     }
 
-    input {
+    input, textarea {
       width: 100%;
       padding: 10px;
       border-radius: 4px;
       border: 1px solid #555;
       background: #222;
       color: #fff;
-      box-sizing: border-box;
       font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
     }
 
     .btn {
@@ -105,7 +112,7 @@
     footer {
       background: rgba(0, 0, 0, 0.7);
       text-align: center;
-      padding: 15px;
+      padding: 10px;
       color: #ccc;
       width: 100%;
       margin-top: auto;
@@ -122,10 +129,10 @@
       <h2>Formulário de Recrutamento</h2>
 
       <label>Discord:</label>
-      <input type="text" id="discord" placeholder="Ex: japa123#4567" required>
+      <input type="text" id="discord" placeholder="Ex: japa123#4567">
 
       <label>Nome:</label>
-      <input type="text" id="nome" placeholder="Ex: Japa Bala" required>
+      <input type="text" id="nome" placeholder="Ex: Japa Bala">
 
       <label>RG:</label>
       <input type="text" id="rg" placeholder="Somente números" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')">
@@ -145,7 +152,7 @@
       <label>Data e Hora para Entrevista:</label>
       <input type="text" id="entrevista" placeholder="00/00/0000 00:00" maxlength="16" oninput="mascaraDataHora(this)">
 
-      <button class="btn" onclick="enviar()">Enviar Recrutamento</button>
+      <button class="btn" id="botaoEnviar" onclick="enviarRecrutamento()">Enviar Recrutamento</button>
       <div id="confirmacao"></div>
     </div>
   </main>
@@ -176,7 +183,7 @@
       input.value = formatado;
     }
 
-    function enviar() {
+    function enviarRecrutamento() {
       const discord = document.getElementById("discord").value.trim();
       const nome = document.getElementById("nome").value.trim();
       const rg = document.getElementById("rg").value.trim();
@@ -185,7 +192,6 @@
       const nivel = document.getElementById("nivel").value.trim();
       const tempo = document.getElementById("tempo").value.trim();
       const entrevista = document.getElementById("entrevista").value.trim();
-      const confirmacaoDiv = document.getElementById("confirmacao");
 
       if (!discord || !nome || !rg || !telefone || !idade || !nivel || !tempo || !entrevista) {
         alert("⚠️ Preencha todos os campos.");
@@ -200,8 +206,7 @@
         `🎂 Idade: ${idade}\n` +
         `🎖️ Nível do Personagem: ${nivel}/100\n` +
         `⏳ Tempo na Cidade: ${tempo}\n` +
-        `🗓️ Data e Hora para Entrevista: ${entrevista}\n\n` +
-        `<@&796350502588776478>`;
+        `🗓️ Data e Hora para Entrevista: ${entrevista}`;
 
       const webhookUrl = "https://discord.com/api/webhooks/1389607513321771040/zXmI5v-AV4q5YMhtnIges23pSgmNYSuFzkUTNDHNfghQbEvCX3FFXq_0TEfXbj1Px9n8";
 
@@ -212,8 +217,17 @@
       })
       .then(res => {
         if (res.ok) {
-          confirmacaoDiv.innerHTML =
-            "✅ Recrutamento enviado com sucesso!<br><br><strong>Em breve um de nossos recrutadores irá entrar em contato via Discord ou Telefone para confirmar sua entrevista, FIQUE ATENTO!!!!</strong>";
+          document.getElementById("confirmacao").innerHTML = 
+            "✅ Recrutamento enviado! Em breve um de nossos recrutadores irá entrar em contato via Discord ou Telefone para confirmar sua entrevista, <strong>FIQUE ATENTO!!!!</strong>";
+
+          const botao = document.getElementById("botaoEnviar");
+          botao.disabled = true;
+          botao.innerText = "Recrutamento solicitado, aguarde";
+
+          setTimeout(() => {
+            botao.disabled = false;
+            botao.innerText = "Enviar Recrutamento";
+          }, 300000); // 5 minutos
         } else {
           alert("❌ Erro ao enviar recrutamento.");
         }
