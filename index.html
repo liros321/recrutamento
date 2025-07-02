@@ -27,22 +27,26 @@
       background: rgba(0, 0, 0, 0.7);
       z-index: -1;
     }
+
     header {
       background-color: rgba(0, 0, 0, 0.8);
       padding: 20px;
       text-align: center;
       width: 100%;
     }
+
     header h1 {
       margin: 0;
       font-size: 2.5em;
       color: #ff4500;
     }
+
     main {
       padding: 30px 20px;
       max-width: 600px;
       width: 100%;
     }
+
     .form-section {
       background: rgba(0, 0, 0, 0.85);
       border-radius: 8px;
@@ -50,17 +54,20 @@
       box-sizing: border-box;
       text-align: center;
     }
+
     h2 {
       color: #ff4500;
       text-align: center;
       margin-top: 0;
     }
+
     label {
       display: block;
       margin: 15px 0 5px;
       font-size: 1.1em;
       text-align: left;
     }
+
     input, textarea {
       width: 100%;
       padding: 10px;
@@ -71,14 +78,12 @@
       font-size: 1em;
       box-sizing: border-box;
     }
+
     textarea {
       resize: vertical;
       min-height: 80px;
     }
-    .btn-container {
-      position: relative;
-      height: 50px;
-    }
+
     .btn {
       background-color: #ff4500;
       border: none;
@@ -88,20 +93,23 @@
       border-radius: 5px;
       cursor: pointer;
       width: 100%;
-      transition: background-color 0.3s, transform 0.1s;
-      position: absolute;
-      left: 0;
-      top: 0;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+      position: fixed;
+      z-index: 10;
     }
+
     .btn:hover {
       background-color: #e03d00;
     }
+
     #confirmacao {
       margin-top: 20px;
       font-size: 1.1em;
       color: #00ff99;
       text-align: center;
     }
+
     footer {
       background: rgba(0, 0, 0, 0.7);
       text-align: center;
@@ -121,23 +129,29 @@
       <h2>Formulário de Recrutamento</h2>
       <label>Discord:</label>
       <input type="text" id="discord" placeholder="Ex: japa123#4567">
+
       <label>Nome:</label>
       <input type="text" id="nome" placeholder="Ex: Japa Bala">
+
       <label>RG:</label>
       <input type="text" id="rg" placeholder="Somente números" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')">
+
       <label>Telefone:</label>
       <input type="text" id="telefone" placeholder="000-000" maxlength="7" oninput="mascaraTelefone(this)">
+
       <label>Idade:</label>
       <input type="text" id="idade" placeholder="Ex: 18" maxlength="3" oninput="this.value = this.value.replace(/\D/g, '')">
+
       <label>Nível do Personagem na Cidade (0 a 100):</label>
       <input type="text" id="nivel" maxlength="3" oninput="this.value = this.value.replace(/\D/g, '')">
+
       <label>Tempo na Cidade:</label>
       <input type="text" id="tempo" placeholder="Ex: 2 semanas">
+
       <label>Data e Hora para Entrevista:</label>
       <input type="text" id="entrevista" placeholder="00/00/0000 00:00" maxlength="16" oninput="mascaraDataHora(this)">
-      <div class="btn-container" id="btnContainer">
-        <button class="btn" id="botaoEnviar" onclick="enviarRecrutamento()">Enviar Recrutamento</button>
-      </div>
+
+      <button class="btn" id="botaoEnviar" onclick="enviarRecrutamento()">Enviar Recrutamento</button>
       <div id="confirmacao"></div>
     </div>
   </main>
@@ -153,6 +167,7 @@
         input.value = valor;
       }
     }
+
     function mascaraDataHora(input) {
       let valor = input.value.replace(/\D/g, '');
       if (valor.length > 12) valor = valor.substring(0, 12);
@@ -164,6 +179,7 @@
       if (valor.length > 10) formatado += ':' + valor.substring(10, 12);
       input.value = formatado;
     }
+
     function enviarRecrutamento() {
       const discord = document.getElementById("discord").value.trim();
       const nome = document.getElementById("nome").value.trim();
@@ -173,10 +189,12 @@
       const nivel = document.getElementById("nivel").value.trim();
       const tempo = document.getElementById("tempo").value.trim();
       const entrevista = document.getElementById("entrevista").value.trim();
+
       if (!discord || !nome || !rg || !telefone || !idade || !nivel || !tempo || !entrevista) {
         alert("⚠️ Preencha todos os campos.");
         return;
       }
+
       const mensagem = `📋 **NOVA INSCRIÇÃO DE RECRUTAMENTO**\n\n` +
         `🕹️ Discord: ${discord}\n` +
         `👤 Nome: ${nome}\n` +
@@ -187,7 +205,9 @@
         `⏳ Tempo na Cidade: ${tempo}\n` +
         `🗓️ Data e Hora para Entrevista: ${entrevista}\n\n` +
         `<@&796350502588776478>`;
+
       const webhookUrl = "https://discord.com/api/webhooks/1389607513321771040/zXmI5v-AV4q5YMhtnIges23pSgmNYSuFzkUTNDHNfghQbEvCX3FFXq_0TEfXbj1Px9n8";
+
       fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -197,12 +217,16 @@
         if (res.ok) {
           document.getElementById("confirmacao").innerHTML =
             "✅ Recrutamento enviado! Em breve um de nossos recrutadores irá entrar em contato via Discord ou Telefone para confirmar sua entrevista, <strong>FIQUE ATENTO!!!!</strong>";
+
           const botao = document.getElementById("botaoEnviar");
           botao.disabled = true;
           botao.innerText = "Você já solicitou o recrutamento";
+
           setTimeout(() => {
             botao.disabled = false;
             botao.innerText = "Enviar Recrutamento";
+            botao.style.left = "";
+            botao.style.top = "";
           }, 300000);
         } else {
           alert("❌ Erro ao enviar recrutamento.");
@@ -213,21 +237,30 @@
       });
     }
 
-    document.getElementById("btnContainer").addEventListener("mousemove", function(e) {
+    document.addEventListener("mousemove", (e) => {
       const botao = document.getElementById("botaoEnviar");
-      if (!botao.disabled) return;
-      const container = this.getBoundingClientRect();
-      const offsetX = e.clientX - container.left;
-      const offsetY = e.clientY - container.top;
-      const centerX = container.width / 2;
-      const centerY = container.height / 2;
-      const dx = offsetX - centerX;
-      const dy = offsetY - centerY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 100) {
-        const moveX = Math.random() * 100 - 50;
-        const moveY = Math.random() * 40 - 20;
-        botao.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      if (botao.disabled) {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        const btnRect = botao.getBoundingClientRect();
+        const distX = mouseX - (btnRect.left + btnRect.width / 2);
+        const distY = mouseY - (btnRect.top + btnRect.height / 2);
+        const distance = Math.sqrt(distX * distX + distY * distY);
+
+        if (distance < 120) {
+          const offsetX = (Math.random() - 0.5) * 300;
+          const offsetY = (Math.random() - 0.5) * 200;
+
+          let newX = btnRect.left + offsetX;
+          let newY = btnRect.top + offsetY;
+
+          newX = Math.max(0, Math.min(window.innerWidth - btnRect.width, newX));
+          newY = Math.max(0, Math.min(window.innerHeight - btnRect.height, newY));
+
+          botao.style.left = `${newX}px`;
+          botao.style.top = `${newY}px`;
+        }
       }
     });
   </script>
